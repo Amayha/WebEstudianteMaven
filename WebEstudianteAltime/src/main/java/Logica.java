@@ -62,6 +62,10 @@ public class Logica {
 		case 4:
 
 			con.pintar();
+			if (con.isGuardar() == true) {
+				pantalla--;
+				con.setGuardar(!con.isGuardar());
+			}
 			break;
 		}
 		if (app.mouseX > 20 && app.mouseX < 70 && app.mouseY > 130 && app.mouseY < 200) {
