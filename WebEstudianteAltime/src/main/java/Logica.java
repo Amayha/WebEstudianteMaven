@@ -1,4 +1,5 @@
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PImage;
 
 public class Logica {
@@ -9,12 +10,15 @@ public class Logica {
 	private Concentracion con;
 	private Usuario us;
 	private int encima;
-	private PImage nav, barra, cuaLog, casa, casa2, estu, estu2, cal, cal2, ojo, lupa, buscador, estu3;
+	private boolean contra, usuario;
+	private PImage nav, barra, cuaLog, login, casa, casa2, estu, estu2, cal, cal2, ojo, lupa, buscador, estu3;
+	private PFont roboto1, roboto2;
 
 	public Logica(PApplet app) {
 		this.app = app;
-
-		pantalla = 2;
+		roboto1 = app.createFont("Roboto-Bold.ttf", 20);
+		roboto2 = app.createFont("Roboto-Regular.ttf", 20);
+		pantalla = 0;
 		home = new Home(app);
 		calen = new Calendario(app);
 		con = new Concentracion(app);
@@ -32,6 +36,8 @@ public class Logica {
 		cal = app.loadImage("cal.png");
 		casa2 = app.loadImage("ppal.png");
 		ojo = app.loadImage("ojo.png");
+		login = app.loadImage("Login.png");
+
 		encima = 1;
 	}
 
@@ -42,7 +48,28 @@ public class Logica {
 
 		switch (pantalla) {
 		case 0:
-
+			app.imageMode(app.CENTER);
+			app.image(login, app.width / 2, app.height / 2);
+			app.imageMode(app.CORNER);
+			app.textFont(roboto2);
+			if (usuario == true) {
+				app.textSize(20);
+				app.fill(30);
+				app.text("1153458759", 456, 330);
+			} else {
+				app.textSize(20);
+				app.fill(150);
+				app.text("Usuario", 456, 330);
+			}
+			if (contra == true) {
+				app.textSize(20);
+				app.fill(30);
+				app.text("*******", 456, 408);
+			} else {
+				app.textSize(20);
+				app.fill(150);
+				app.text("Contraseña", 456, 408);
+			}
 			break;
 		case 1:
 			home.pintar();
@@ -95,7 +122,16 @@ public class Logica {
 		}
 		switch (pantalla) {
 		case 0:
-
+			if (app.mouseX > 456 && app.mouseX < 530 && app.mouseY > 310 && app.mouseY < 330) {
+				usuario = true;
+			}
+			if (app.mouseX > 505 && app.mouseX < 680 && app.mouseY > 450 && app.mouseY < 508 && usuario == true
+					&& contra == true) {
+				pantalla++;
+			}
+			if (app.mouseX > 456 && app.mouseX < 560 && app.mouseY > 390 && app.mouseY < 410) {
+				contra = true;
+			}
 			break;
 		case 1:
 			home.mouse();
