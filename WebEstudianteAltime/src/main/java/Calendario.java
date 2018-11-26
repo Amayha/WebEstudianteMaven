@@ -7,9 +7,13 @@ public class Calendario {
 	private PFont roboto1, roboto2;
 	private PImage cuadroBuho, buho, mas, calbar, calbar2, eliminar, popup, guardar;
 	private boolean evento, text1, text2;
+	private calendarioLit calen;
+
 
 	public Calendario(PApplet app) {
 		this.app = app;
+		calen = new calendarioLit(app);
+
 		roboto1 = app.createFont("Roboto-Bold.ttf", 20);
 		roboto2 = app.createFont("Roboto-Regular.ttf", 20);
 		cuadroBuho = app.loadImage("cuadroBuho.png");
@@ -34,6 +38,7 @@ public class Calendario {
 			app.image(mas, 157, 28);
 			app.noTint();
 		}
+		calen.pintar();
 		app.image(calbar2, 112, 408);
 		app.image(calbar, 112, 370);
 		app.image(eliminar, 230, 560);
@@ -78,6 +83,7 @@ public class Calendario {
 	}
 
 	public void mouse() {
+		calen.mouse();
 		// presionar el + de agregar evento
 		if (app.mouseX > 155 && app.mouseX < 210 && app.mouseY > 30 && app.mouseY < 80) {
 			evento = true;
