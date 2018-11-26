@@ -18,6 +18,7 @@ public class calendarioLit {
 	private float calendarWidth;
 	private float calendarHeight;
 	private float spacing;
+	private int dia;
 
 	public calendarioLit(PApplet app) {
 		this.app = app;
