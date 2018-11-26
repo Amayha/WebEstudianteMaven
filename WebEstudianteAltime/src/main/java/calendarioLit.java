@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 
 public class calendarioLit {
 	private PApplet app;
@@ -12,25 +13,48 @@ public class calendarioLit {
 	private String[] weekDays = { "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" };
 	private int currentMonth;
 	private int currentYear;
+	private int[] eventos;
+	private boolean clic, evento;
 	private float plannerWidth;
 	private float margin;
+
+	private PImage flecha, flecha2;
 	private float topLabelMargin;
 	private float calendarWidth;
 	private float calendarHeight;
 	private float spacing;
-	private int dia;
+	private int dia, mesNum;
+	private String mes, curDayOfWeekName;
+	private int diaSel;
+	private int daysInMonth;
+	private int dayOfMonth;
+	private int dayOfWeek;
+	private Date date;
+	private int startingDayOfMonth;
+	private float xoff;
+	private float yoff;
+	private float boxWidth;
+	private float boxHeight, x, y;
 
 	public calendarioLit(PApplet app) {
 		this.app = app;
 		plannerWidth = 0;
-
+		flecha = app.loadImage("flecha.png");
+		flecha2 = app.loadImage("flecha2.png");
 		margin = 50;
 		topLabelMargin = 100;
+
 		calendarWidth = app.width - plannerWidth - (margin * 2);
 		calendarHeight = app.height - (margin * 2) - topLabelMargin;
 		spacing = 0;
 		currentMonth = app.month() - 1;
 		currentYear = app.year();
+		evento = false;
+
+	}
+
+	public String getMes() {
+		return mes;
 	}
 
 	void pintar() {
@@ -38,11 +62,14 @@ public class calendarioLit {
 		app.textAlign(app.CENTER);
 
 		String monthName = monthNames[currentMonth];
-		int daysInMonth = monthDays[currentMonth];
+		daysInMonth = monthDays[currentMonth];
+
+		mes = monthNames[currentMonth];
+
 		if (currentMonth == 1 && isLeapYear(currentYear))
 			daysInMonth++;
-		int dayOfMonth = -1;
-		int dayOfWeek = -1;
+		dayOfMonth = -1;
+		dayOfWeek = -1;
 		String dayOfWeekName = "";
 
 		if (currentMonth == app.month() - 1 && currentYear == app.year()) {
@@ -51,12 +78,12 @@ public class calendarioLit {
 			dayOfWeekName = weekDays[dayOfWeek];
 		}
 
-		Date date = new Date();
+		date = new Date();
 		date.setYear(currentYear);
 		date.setMonth(currentMonth);
 		date.setDate(1);
 
-		int startingDayOfMonth = date.getDay(); // int(7 - (dayOfMonth % 7)); //NOT WORKING!
+		startingDayOfMonth = date.getDay(); // int(7 - (dayOfMonth % 7)); //NOT WORKING!
 		String startingDayOfMonthName = weekDays[startingDayOfMonth];
 
 		// Celendar Metrics
@@ -65,56 +92,8 @@ public class calendarioLit {
 		topLabelMargin = 100;
 		calendarWidth = 787 - plannerWidth - (margin * 2);
 		calendarHeight = 618 - (margin * 2) - topLabelMargin;
-		float boxWidth = (calendarWidth - (6 * spacing)) / 7;
-		float boxHeight = (calendarHeight - ((numRows - 1) * spacing)) / numRows;
-
-		if (mouseInArrowRange()) {
-			app.noStroke();
-
-			if (mouseOverArrow(-1) || mouseOverArrow(-2))
-				app.fill(255);
-			else
-				app.fill(204);
-			app.triangle((float) ((app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 3.5),
-					margin + topLabelMargin / 10 * 3,
-					(app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 3,
-					margin + topLabelMargin / 10 * 2,
-					(app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 3,
-					margin + topLabelMargin / 10 * 4);
-
-			if (mouseOverArrow(1) || mouseOverArrow(2))
-				app.fill(255);
-			else
-				app.fill(204);
-			app.triangle((float) ((app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 3.5),
-					margin + topLabelMargin / 10 * 3,
-					(app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 3,
-					margin + topLabelMargin / 10 * 2,
-					(app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 3,
-					margin + topLabelMargin / 10 * 4);
-
-			if (mouseOverArrow(-2))
-				app.fill(255);
-			else
-				app.fill(204);
-			app.triangle((float) ((app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 4.1),
-					margin + topLabelMargin / 10 * 3,
-					(float) ((app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 3.6),
-					margin + topLabelMargin / 10 * 2,
-					(float) ((app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 3.6),
-					margin + topLabelMargin / 10 * 4);
-
-			if (mouseOverArrow(2))
-				app.fill(255);
-			else
-				app.fill(204);
-			app.triangle((float) ((app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 4.1),
-					margin + topLabelMargin / 10 * 3,
-					(float) ((app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 3.6),
-					margin + topLabelMargin / 10 * 2,
-					(float) ((app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 3.6),
-					margin + topLabelMargin / 10 * 4);
-		}
+		boxWidth = (calendarWidth - (6 * spacing)) / 7;
+		boxHeight = (calendarHeight - ((numRows - 1) * spacing)) / numRows;
 
 		app.fill(204);
 		app.textSize(12);
@@ -129,13 +108,13 @@ public class calendarioLit {
 
 		app.stroke(0);
 
-		float xoff = startingDayOfMonth;
-		float yoff = 0;
+		xoff = startingDayOfMonth;
+		yoff = 0;
 		for (int i = 0; i < daysInMonth; i++) {
-			String curDayOfWeekName = weekDays[(int) xoff];
+			curDayOfWeekName = weekDays[(int) xoff];
 
-			float x = margin + 350 + (spacing * xoff) + (boxWidth * xoff);
-			float y = margin + topLabelMargin + (spacing * yoff) + (boxHeight * yoff);
+			x = margin + 350 + (spacing * xoff) + (boxWidth * xoff);
+			y = margin + topLabelMargin + (spacing * yoff) + (boxHeight * yoff);
 
 			app.noStroke();
 			app.fill(51);
@@ -145,16 +124,27 @@ public class calendarioLit {
 				app.fill(219);
 			else
 				app.fill(255);
-			if (app.mouseX > x && app.mouseX < x + boxWidth && app.mouseY > y && app.mouseY < y + boxHeight) {
+
+			if (app.mouseX > x && app.mouseX < x + boxWidth && app.mouseY > y && app.mouseY < y + boxHeight
+					&& evento == false) {
 				app.fill(219);
 			}
+
+			if (app.mouseX > x && app.mouseX < x + boxWidth && app.mouseY > y && app.mouseY < y + boxHeight
+					&& clic == true && evento == false) {
+				diaSel = i + 1;
+				mesNum = currentMonth;
+				clic = false;
+			}
+			if (i == diaSel - 1 && currentMonth == mesNum && evento == false) {
+				app.fill(241, 135, 104);
+			}
+
 			app.rect(x, y, boxWidth, boxHeight);
 
-			app.fill(255, 138, 102);
+			app.fill(100);
 			app.textSize(24);
-			if (app.mouseX > x && app.mouseX < x + boxWidth && app.mouseY > y && app.mouseY < y + boxHeight) {
-				System.out.println(i + 1);
-			}
+
 			app.text(i + 1, x + boxWidth / 2, y + boxHeight / 2);
 
 			app.textSize(9);
@@ -168,14 +158,9 @@ public class calendarioLit {
 		if (plannerWidth > 50) {
 			app.fill(51);
 
-			app.rect(app.width - plannerWidth + 3, margin + topLabelMargin + 3, plannerWidth - margin,
-					app.height - margin * 2 - topLabelMargin);
-
 			app.stroke(0);
 			app.fill(204);
 
-			app.rect(app.width - plannerWidth, margin + topLabelMargin, plannerWidth - margin,
-					app.height - margin * 2 - topLabelMargin);
 		}
 		app.fill(20);
 		app.textSize(25);
@@ -185,33 +170,18 @@ public class calendarioLit {
 		app.textSize(22);
 		app.text(currentYear, 245, 345);
 		app.textAlign(app.CORNER);
-	}
-
-	boolean mouseOverArrow(int arrow) {
-		switch (arrow) {
-		case -2:
-			return (mouseInArrowRange()
-					&& app.mouseX > ((app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 4.1)
-					&& (app.mouseX < (app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 3.6));
-		case -1:
-			return (mouseInArrowRange()
-					&& app.mouseX > ((app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 3.5)
-					&& (app.mouseX < (app.width - plannerWidth) / 2 - (app.width - plannerWidth) / 10 * 3));
-		case 1:
-			return (mouseInArrowRange()
-					&& app.mouseX < ((app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 3.5)
-					&& (app.mouseX > (app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 3));
-		case 2:
-			return (mouseInArrowRange()
-					&& app.mouseX < ((app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 4.1)
-					&& (app.mouseX > (app.width - plannerWidth) / 2 + (app.width - plannerWidth) / 10 * 3.6));
+		app.image(flecha, 159, 308);
+		app.image(flecha2, 329.15f, 308);
+		if (app.mouseX > 150 && app.mouseX < 170 && app.mouseY > 300 && app.mouseY < 325) {
+			app.tint(0, 100);
+			app.image(flecha, 159, 308);
+			app.noTint();
 		}
 
-		return false;
 	}
 
-	boolean mouseInArrowRange() {
-		return (app.mouseY > (margin + topLabelMargin / 10 * 2) && app.mouseY < (margin + topLabelMargin / 10 * 4));
+	public String[] getMonthNames() {
+		return monthNames;
 	}
 
 	boolean isLeapYear(int year) {
@@ -226,28 +196,33 @@ public class calendarioLit {
 	}
 
 	void mouse() {
-		if (mouseInArrowRange()) {
-			if (mouseOverArrow(-2))
-				currentYear--;
-			if (mouseOverArrow(-1)) {
-				currentMonth--;
-				if (currentMonth < 0) {
-					currentYear--;
-					currentMonth = 11;
-				}
-			}
-			if (mouseOverArrow(1)) {
-				currentMonth++;
-				if (currentMonth > 11) {
-					currentYear++;
-					currentMonth = 0;
-				}
-			}
-			if (mouseOverArrow(2))
-				currentYear++;
+		if (app.mouseX > 155 && app.mouseX < 210 && app.mouseY > 30 && app.mouseY < 80) {
+			evento = true;
 		}
-
-		// if(overPlannerScroller()) pressedPlannerScroller = true;
+		if (app.mouseX > 790 && app.mouseX < 890 && app.mouseY > 400 && app.mouseY < 430) {
+			evento = false;
+		}
+		// presiona boton cancelar
+		if (app.mouseX > 704 && app.mouseX < 775 && app.mouseY > 400 && app.mouseY < 430) {
+			evento = false;
+		}
+		if (app.mouseX > 150 && app.mouseX < 170 && app.mouseY > 300 && app.mouseY < 325) {
+			currentMonth--;
+			if (currentMonth < 0) {
+				currentYear--;
+				currentMonth = 11;
+			}
+		}
+		if (app.mouseX > 325 && app.mouseX < 340 && app.mouseY > 300 && app.mouseY < 325) {
+			currentMonth++;
+			if (currentMonth > 11) {
+				currentYear++;
+				currentMonth = 0;
+			}
+		}
+		if (app.mouseButton == app.LEFT) {
+			clic = true;
+		}
 	}
 
 	int getDayInMonth(int year, int month, int dayOfWeek, int num) {
@@ -279,6 +254,10 @@ public class calendarioLit {
 	boolean overPlannerScroller() {
 		return (app.mouseY > margin + topLabelMargin && app.mouseY < margin + topLabelMargin + calendarHeight
 				&& app.mouseX > app.width - plannerWidth - 15 && app.mouseX < app.width - plannerWidth + 5);
+	}
+
+	public int getDiaSel() {
+		return diaSel;
 	}
 
 }

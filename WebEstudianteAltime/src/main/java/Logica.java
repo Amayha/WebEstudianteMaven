@@ -14,7 +14,7 @@ public class Logica {
 	public Logica(PApplet app) {
 		this.app = app;
 
-		pantalla = 1;
+		pantalla = 2;
 		home = new Home(app);
 		calen = new Calendario(app);
 		con = new Concentracion(app);

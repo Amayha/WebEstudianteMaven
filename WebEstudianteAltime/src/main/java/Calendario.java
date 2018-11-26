@@ -8,7 +8,7 @@ public class Calendario {
 	private PImage cuadroBuho, buho, mas, calbar, calbar2, eliminar, popup, guardar;
 	private boolean evento, text1, text2;
 	private calendarioLit calen;
-
+	private boolean estaEnEvento;
 
 	public Calendario(PApplet app) {
 		this.app = app;
@@ -41,16 +41,23 @@ public class Calendario {
 		calen.pintar();
 		app.image(calbar2, 112, 408);
 		app.image(calbar, 112, 370);
-		app.image(eliminar, 230, 560);
-		app.fill(255, 138, 102);
-		app.textSize(12);
-		app.text("Eliminar", 221, 610);
+		//esto solo sale cuando se crea un evento pero hay que crear esa condicion
+		if (estaEnEvento == true) {
+			app.image(eliminar, 230, 560);
+			app.fill(255, 138, 102);
+			app.textSize(12);
+			app.text("Eliminar", 221, 610);
+		}
 		// esto es lo que sale al darle al +
 		if (evento == true) {
 			app.fill(0, 100);
 			app.rect(0, 0, app.width, app.height);
 			app.image(popup, 401, 240);
 			app.image(guardar, 792, 398);
+			app.textSize(30);
+			app.fill(0);
+			app.text(calen.getMes(), 700, 285);
+			app.text(calen.getDiaSel(), 665, 285);
 			if (app.mouseX > 704 && app.mouseX < 775 && app.mouseY > 400 && app.mouseY < 430) {
 				app.fill(0);
 			} else {
@@ -71,7 +78,7 @@ public class Calendario {
 				app.text("Hacer lectura", 443, 382);
 			} else {
 				app.fill(196, 196, 196);
-				app.text("Descripci�n corta", 443, 382);
+				app.text("Descripcion corta", 443, 382);
 			}
 			if (app.mouseX > 790 && app.mouseX < 890 && app.mouseY > 400 && app.mouseY < 430) {
 				app.tint(255, 0, 0, 30);

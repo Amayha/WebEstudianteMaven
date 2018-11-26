@@ -147,7 +147,7 @@ public class Usuario {
 		app.text("Comunicacion \noral y escrita 1", 460.05f + 50, 260.38f);
 		app.text("Logica y \nargumentacion", 605.55f + 45, 260.38f);
 		app.text("Algebra y \nfunciones", 755.45f + 35, 260.38f);
-		app.text("Introduccion al \ndiseï¿½o", 884.24f + 45, 260.38f);
+		app.text("Introduccion al \ndiseño", 884.24f + 45, 260.38f);
 		app.textAlign(app.CORNER);
 
 	}
